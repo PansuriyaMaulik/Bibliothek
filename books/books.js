@@ -18,12 +18,12 @@ mongoose.connect("mongodb+srv://maulikpansuriya36:L5nO8eFUi87tsdJE@netflixclone.
 });
 
 //Routes
-app.get('/', (req,res) => {
+app.get('/', (req, res) => {
     res.send("This is our main endpoint!");
 })
 
 //Create book routes
-app.post('/book', (req,res) => {
+app.post('/book', (req, res) => {
     //This our create book functions
     try {
         var newBook = {
@@ -32,7 +32,7 @@ app.post('/book', (req,res) => {
             numberOfPages: req.body.numberOfPages,
             publisher: req.body.publisher
         }
-        
+
         //create a new book
         var book = new Book(newBook);
         book.save();
@@ -42,6 +42,26 @@ app.post('/book', (req,res) => {
         res.send("Not able to store book data into database")
     }
 });
+
+//get all book from the Book Collections
+app.get('/book', (req, res) => {
+    Book.find().then((book) => {
+        res.json(book);
+    }).catch((err) => {
+        res.send("Not able to fetch all books from database")
+    });
+});
+
+//get one book from the Book Collection
+app.get('/book/:id', (req, res) => {
+    try {
+        Book.findById(req.params.id).then((book) => {
+            res.json(book);
+        })
+    } catch (error) {
+        res.send("Not able to fetch single book from database")
+    }
+})
 
 app.listen(port, () => {
     console.log(`Server is up and running on port ${port} and this is our book service`);
