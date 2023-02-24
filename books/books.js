@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+require('dotenv').config()
 require("./Book")
 
 const app = express();
@@ -13,7 +14,7 @@ app.use(bodyParser.json());
 const Book = mongoose.model("Book");
 
 //connect to mongoose
-mongoose.connect("mongodb+srv://maulikpansuriya36:L5nO8eFUi87tsdJE@netflixclone.mv9akzj.mongodb.net/booksservice?retryWrites=true&w=majority", () => {
+mongoose.connect(process.env.MONGO_URI, () => {
     console.log("Connected to mongoDB database")
 });
 
@@ -60,6 +61,17 @@ app.get('/book/:id', (req, res) => {
         })
     } catch (error) {
         res.send("Not able to fetch single book from database")
+    }
+})
+
+//delete one book from the Book Collection
+app.delete('/book/:id', (req, res) => {
+    try {
+        Book.findByIdAndDelete(req.params.id).then((book) => {
+            res.send("Book deleted successfully");
+        })
+    } catch (error) {
+        res.send("Not able to delete single book from database")
     }
 })
 
